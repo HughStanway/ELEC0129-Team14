@@ -17,9 +17,9 @@ Servo Joint3;
 Servo Gripper;
 
 // Starting Joint Angles
-int Joint1Angle = 60; // Change 5 sets of angles
-int Joint2Angle = 60; // Change 5 sets of angles
-int Joint3Angle = 60; // Change 5 sets of angles
+int Joint1Angle = 45; // Change 5 sets of angles
+int Joint2Angle = 45; // Change 5 sets of angles
+int Joint3Angle = 45; // Change 5 sets of angles
 int GripperOpen = 150; // Open gripper; Need to tune value
 int GripperClose = 60; // Close gripper; Need to tune value
 
