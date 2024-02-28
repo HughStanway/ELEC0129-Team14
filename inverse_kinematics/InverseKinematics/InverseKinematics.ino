@@ -11,16 +11,6 @@
 #define Joint3Pin 4
 #define GripperPin 9
 
-// Control Pins
-int Joint1ControlPin = A1;
-int Joint2ControlPin = A2;
-int Joint3ControlPin = A3;
-
-// Control Values
-int Joint1Control = 512; // middle value between 0 and 1024
-int Joint2Control = 512; // middle value between 0 and 1024
-int Joint3Control = 512;
-
 // Servo Objects
 Servo Joint1;
 Servo Joint2;
@@ -33,8 +23,8 @@ float y = 90;
 float z = 90;
 
 // Link lengths (mm)
-float l1 = 90;
-float l2 = 170;
+float l1 = 97;
+float l2 = 90;
 
 // Declare thetas
 float theta_1;
@@ -42,9 +32,9 @@ float theta_2;
 float theta_3;
 
 // Starting Joint Angles
-int Joint1Angle = 45; // Change 5 sets of angles
-int Joint2Angle = 70; // Change 5 sets of angles
-int Joint3Angle = 67; // Change 5 sets of angles
+int Joint1Angle = 124; // Change 5 sets of angles
+int Joint2Angle = 83; // Change 5 sets of angles
+int Joint3Angle = 78; // Change 5 sets of angles
 int GripperOpen = 150; // Open gripper; Need to tune value
 int GripperClose = 60; // Close gripper; Need to tune value
 
@@ -52,22 +42,6 @@ int GripperClose = 60; // Close gripper; Need to tune value
 int Joint1Offset = 10; // Your value may be different
 int Joint2Offset = 15; // Your value may be different
 int Joint3Offset = -14; // Your value may be different
-
-int calculate_theta_1() {
- theta_1 = acos(y / sqrt(pow(x, 2) + pow(y, 2))) * (180 / PI);
-}
-
-int calculate_theta_2() {
- float phi = atan(z / sqrt(pow(x, 2) + pow(y, 2))) * (180 / PI);
- float beta_top = pow(l1, 2) + pow(x, 2) + pow(y, 2) + pow(z, 2) - pow(l2, 2);
- float beta_bottom = (2 * l1 * sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2)));
- float beta = acos((beta_top / beta_bottom)) * (180 / PI);
- theta_2 = phi + beta;
-}
-
-int calculate_theta_3() {
- theta_3 = acos(((pow(x, 2) + pow(y, 2) + pow(z, 2) - pow(l1, 2) - pow(l2, 2)) / (2 * l1 * l2))) * (180 / PI);
-}
 
 void setup()
 {
@@ -81,28 +55,37 @@ void setup()
  Joint1.write(Joint1Angle+Joint1Offset); 
  Joint2.write(Joint2Angle+Joint2Offset); 
  Joint3.write(Joint3Angle+Joint3Offset); 
- Gripper.write(GripperOpen);
+ Gripper.write(GripperOpen); // Open gripper
+
+ // Calculate new values using inverse kinematics.
+
+ // Calculate theta 3
+ float raw_value = (pow(x, 2) + pow(y, 2) + pow(z, 2) - pow(l1, 2) - pow(l2, 2)) / (2 * l1 * l2);
+ theta_3 = acos(raw_value);
+
+ // Calculate theta 2
+ float thi = atan2(z, (pow(x, 2) + pow(y, 2)));
+ float c = sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
+ float raw_beta = (pow(l1, 2) + pow(c, 2) - pow(l2, 2)) / (2 * l1 * l2);
+ float beta = acos(raw_beta);
+ theta_2 = thi + beta;
+
+ // Calculate theta 1
+ float raw_theta_1 = (y) / sqrt((pow(x, 2) + pow(y, 2)));
+ theta_1 = acos(raw_theta_1);
+
+ Serial.println("Test");
+ Serial.println((theta_1 * 180) / PI);
+ Serial.println((theta_2 * 180) / PI);
+ Serial.println((theta_3 * 180) / PI);
+
  delay(5);
 }
 
 void loop()
 {
- // Read Potentiometer Values
- float read_x = analogRead(Joint1ControlPin);
- float read_y = analogRead(Joint2ControlPin);
- float read_z = analogRead(Joint3ControlPin);
-
- x = map(read_x,0,1023,0,240);
- y = map(read_y,0,1023,0,150);
- z = map(read_z,0,1023,0,240);
-
- Joint1Angle = calculate_theta_1();
- Joint2Angle = calculate_theta_2();
- Joint3Angle = calculate_theta_3();
- 
- Joint1.write(theta_1+Joint1Offset); 
- Joint2.write(theta_2+Joint2Offset); 
- Joint3.write(theta_3+Joint3Offset); 
-
+ Joint1.write(Joint1Angle+Joint1Offset); 
+ Joint2.write(Joint2Angle+Joint2Offset); 
+ Joint3.write(Joint3Angle+Joint3Offset); 
  delay(10);
 }
