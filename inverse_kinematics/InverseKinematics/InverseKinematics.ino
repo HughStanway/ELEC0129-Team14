@@ -23,8 +23,8 @@ float y = 90;
 float z = 90;
 
 // Link lengths (mm)
-float l1 = 97;
-float l2 = 90;
+float l1 = 100;
+float l2 = 170;
 
 // Declare thetas
 float theta_1;
@@ -84,8 +84,8 @@ void setup()
 
 void loop()
 {
- Joint1.write(Joint1Angle+Joint1Offset); 
- Joint2.write(Joint2Angle+Joint2Offset); 
- Joint3.write(Joint3Angle+Joint3Offset); 
+ Joint1.write(theta_1+Joint1Offset); 
+ Joint2.write(theta_2+Joint2Offset); 
+ Joint3.write(theta_3+Joint3Offset); 
  delay(10);
 }
