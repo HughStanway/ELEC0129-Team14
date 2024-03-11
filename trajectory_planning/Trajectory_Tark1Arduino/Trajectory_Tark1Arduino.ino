@@ -71,21 +71,21 @@ float *z_points;
 
 void calculate_theta_1()
 {
- theta_1 = acos(y / sqrt(pow(x, 2) + pow(y, 2))) * (180 / PI);
+theta_1 = acos(x / sqrt(pow(x, 2) + pow(y, 2))) * (180 / PI);
 }
 
 void calculate_theta_2()
 {
- float phi = atan(z / sqrt(pow(x, 2) + pow(y, 2))) * (180 / PI);
- float beta_top = pow(l1, 2) + pow(x, 2) + pow(y, 2) + pow(z, 2) - pow(l2, 2);
- float beta_bottom = (2 * l1 * sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2)));
- float beta = acos((beta_top / beta_bottom)) * (180 / PI);
- theta_2 = phi + beta;
+float phi = atan(-1*z / sqrt(pow(x, 2) + pow(y, 2))) * (180 / PI);
+float beta_top = pow(l1, 2) + pow(x, 2) + pow(y, 2) + pow(z, 2) - pow(l2, 2);
+float beta_bottom = (2 * l1 * sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2)));
+float beta = acos((beta_top / beta_bottom)) * (180 / PI);
+theta_2 = phi + beta;
 }
 
 void calculate_theta_3()
 {
- theta_3 = acos(((pow(x, 2) + pow(y, 2) + pow(z, 2) - pow(l1, 2) - pow(l2, 2)) / (2 * l1 * l2))) * (180 / PI);
+theta_3 = acos(((pow(x, 2) + pow(y, 2) + pow(z, 2) - pow(l1, 2) - pow(l2, 2)) / (2 * l1 * l2))) * (180 / PI);
 }
 
 float* calculate_projected_trajectory(int u_start, int u_finish, int tf, int num_points)

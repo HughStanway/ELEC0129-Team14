@@ -10,19 +10,19 @@
 //////////////////////////////////////////////////////////////////////
 
 // X,Y,Z Values of the home position
-float x_home = 170;
-float y_home = 0;
-float z_home = 100;
+float x_home = 0;
+float y_home = 170;
+float z_home = -100;
 
 // pickup X, Y, Z location (Change these values to starting position)
-float x_start = 160;
-float y_start = 0;
-float z_start = -50;
+float x_start = 0;
+float y_start = 160;
+float z_start = 50;
 
 // drop X, Y, Z location (Change these values to starting position)
-float x_finish = 160;
-float y_finish = -100;
-float z_finish = -50;
+float x_finish = -100;
+float y_finish = 160;
+float z_finish = 50;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Dont change any values below as they define robot constants and variables //
@@ -79,12 +79,12 @@ float *z_points_dropoff;
 
 void calculate_theta_1()
 {
-theta_1 = acos(y / sqrt(pow(x, 2) + pow(y, 2))) * (180 / PI);
+theta_1 = acos(x / sqrt(pow(x, 2) + pow(y, 2))) * (180 / PI);
 }
 
 void calculate_theta_2()
 {
-float phi = atan(z / sqrt(pow(x, 2) + pow(y, 2))) * (180 / PI);
+float phi = atan(-1*z / sqrt(pow(x, 2) + pow(y, 2))) * (180 / PI);
 float beta_top = pow(l1, 2) + pow(x, 2) + pow(y, 2) + pow(z, 2) - pow(l2, 2);
 float beta_bottom = (2 * l1 * sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2)));
 float beta = acos((beta_top / beta_bottom)) * (180 / PI);

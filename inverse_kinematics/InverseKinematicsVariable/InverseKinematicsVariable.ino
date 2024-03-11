@@ -53,20 +53,23 @@ int Joint1Offset = 10; // Your value may be different
 int Joint2Offset = 15; // Your value may be different
 int Joint3Offset = -14; // Your value may be different
 
-int calculate_theta_1() {
- theta_1 = acos(y / sqrt(pow(x, 2) + pow(y, 2))) * (180 / PI);
+void calculate_theta_1()
+{
+theta_1 = acos(x / sqrt(pow(x, 2) + pow(y, 2))) * (180 / PI);
 }
 
-int calculate_theta_2() {
- float phi = atan(z / sqrt(pow(x, 2) + pow(y, 2))) * (180 / PI);
- float beta_top = pow(l1, 2) + pow(x, 2) + pow(y, 2) + pow(z, 2) - pow(l2, 2);
- float beta_bottom = (2 * l1 * sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2)));
- float beta = acos((beta_top / beta_bottom)) * (180 / PI);
- theta_2 = phi + beta;
+void calculate_theta_2()
+{
+float phi = atan(-1*z / sqrt(pow(x, 2) + pow(y, 2))) * (180 / PI);
+float beta_top = pow(l1, 2) + pow(x, 2) + pow(y, 2) + pow(z, 2) - pow(l2, 2);
+float beta_bottom = (2 * l1 * sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2)));
+float beta = acos((beta_top / beta_bottom)) * (180 / PI);
+theta_2 = phi + beta;
 }
 
-int calculate_theta_3() {
- theta_3 = acos(((pow(x, 2) + pow(y, 2) + pow(z, 2) - pow(l1, 2) - pow(l2, 2)) / (2 * l1 * l2))) * (180 / PI);
+void calculate_theta_3()
+{
+theta_3 = acos(((pow(x, 2) + pow(y, 2) + pow(z, 2) - pow(l1, 2) - pow(l2, 2)) / (2 * l1 * l2))) * (180 / PI);
 }
 
 void setup()
@@ -96,9 +99,9 @@ void loop()
  y = map(read_y,0,1023,0,150);
  z = map(read_z,0,1023,0,240);
 
- Joint1Angle = calculate_theta_1();
- Joint2Angle = calculate_theta_2();
- Joint3Angle = calculate_theta_3();
+ calculate_theta_1();
+ calculate_theta_2();
+ calculate_theta_3();
  
  Joint1.write(theta_1+Joint1Offset); 
  Joint2.write(theta_2+Joint2Offset); 
