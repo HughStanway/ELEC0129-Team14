@@ -9,29 +9,29 @@
 // Change values below to specify start and finish cartesian points //
 //////////////////////////////////////////////////////////////////////
 
-// starting X, Y, Z Values (Change these values to starting position)
+// X,Y,Z Values of the home position
+float x_home = 170;
+float y_home = 0;
+float z_home = 100;
+
+// pickup X, Y, Z location (Change these values to starting position)
 float x_start = 160;
 float y_start = 0;
 float z_start = -50;
 
-// mid X, Y, Z Values (Change these values to starting position)
+// drop X, Y, Z location (Change these values to starting position)
 float x_finish = 160;
-float y_finish = 0;
-float z_finish = 50;
-
-// final X, Y, Z Values (Change these values to starting position)
-float x_finish_2 = 160;
-float y_finish_2 = -100;
-float z_finish_2 = -50;
+float y_finish = -100;
+float z_finish = -50;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Dont change any values below as they define robot constants and variables //
 ///////////////////////////////////////////////////////////////////////////////
 
 // These will be the current [x,y,z] values used to calculate theta at each time (t)
-int x = x_start;
-int y = y_start;
-int z = z_start;
+int x = x_home;
+int y = y_home;
+int z = z_home;
 
 // Arm Servo pins
 #define Joint1Pin 2
@@ -69,13 +69,13 @@ float granularity = 0.1;
 float num_points = 50;
 
 // Declare array that stores the projected trajectory.
-float *x_points;
-float *y_points;
-float *z_points;
+float *x_points_pickup;
+float *y_points_pickup;
+float *z_points_pickup;
 
-float *x_points_2;
-float *y_points_2;
-float *z_points_2;
+float *x_points_dropoff;
+float *y_points_dropoff;
+float *z_points_dropoff;
 
 void calculate_theta_1()
 {
@@ -155,67 +155,63 @@ void reverse_trajectory_movement(float* x_arr, float* y_arr, float* z_arr)
 
 void setup()
 {
-// Setup and write initial joint positions
-Serial.begin(9600);
-Joint1.attach(Joint1Pin);
-Joint2.attach(Joint2Pin);
-Joint3.attach(Joint3Pin);
-Gripper.attach(GripperPin);
+ // Setup and write initial joint positions at the home location
+ Serial.begin(9600);
+ Joint1.attach(Joint1Pin);
+ Joint2.attach(Joint2Pin);
+ Joint3.attach(Joint3Pin);
+ Gripper.attach(GripperPin);
 
-calculate_theta_1();
-calculate_theta_2();
-calculate_theta_3();
-Joint1.write(theta_1+Joint1Offset);
-Joint2.write(theta_2+Joint2Offset);
-Joint3.write(theta_3+Joint3Offset);
-Gripper.write(GripperOpen);
+ calculate_theta_1();
+ calculate_theta_2();
+ calculate_theta_3();
 
-// Pre-calculate the projected trajectory between the two points
-x_points = calculate_projected_trajectory(x_start, x_finish, tf, (int) num_points);
-y_points = calculate_projected_trajectory(y_start, y_finish, tf, (int) num_points);
-z_points = calculate_projected_trajectory(z_start, z_finish, tf, (int) num_points);
+ Joint1.write(theta_1+Joint1Offset);
+ Joint2.write(theta_2+Joint2Offset);
+ Joint3.write(theta_3+Joint3Offset);
+ Gripper.write(GripperOpen);
 
-x_points_2 = calculate_projected_trajectory(x_finish, x_finish_2, tf, (int) num_points);
-y_points_2 = calculate_projected_trajectory(y_finish, y_finish_2, tf, (int) num_points);
-z_points_2 = calculate_projected_trajectory(z_finish, z_finish_2, tf, (int) num_points);
+ // Pre-calculate the projected trajectory between home and the pickup location
+ x_points_pickup = calculate_projected_trajectory(x_home, x_start, tf, (int) num_points);
+ y_points_pickup = calculate_projected_trajectory(y_home, y_start, tf, (int) num_points);
+ z_points_pickup = calculate_projected_trajectory(z_home, z_start, tf, (int) num_points);
 
-// Wait the 10 seconds as required.
-Serial.println("Delay 10 sec");
-delay(5000);
+ // Pre-calculate the projected trajectory between home and the drop off location
+ x_points_dropoff = calculate_projected_trajectory(x_home, x_finish, tf, (int) num_points);
+ y_points_dropoff = calculate_projected_trajectory(y_home, y_finish, tf, (int) num_points);
+ z_points_dropoff = calculate_projected_trajectory(z_home, z_finish, tf, (int) num_points);
+
+ // Wait the 10 seconds as required.
+ Serial.println("Delay 10 sec");
+ delay(10000);
 }
 
 void loop()
 {
-//////////////////////
-// Forward Movement //
-//////////////////////
-Gripper.write(GripperClose);
+ /////////////////////
+ // Pickup Movement //
+ /////////////////////
+ Serial.println("Start move to pickup");
+ forward_trajectory_movement(x_points_pickup, y_points_pickup, z_points_pickup);
+ Serial.println("End move to pickup");
 
-Serial.println("Start forward movement");
-forward_trajectory_movement(x_points, y_points, z_points);
-Serial.println("Forward halfway point");
-forward_trajectory_movement(x_points_2, y_points_2, z_points_2);
-Serial.println("End forward movement");
+ Gripper.write(GripperClose);
+ 
+ Serial.println("Start move back to home");
+ reverse_trajectory_movement(x_points_pickup, y_points_pickup, z_points_pickup);
+ Serial.println("End move back to home");
 
-delay(1000);
-Gripper.write(GripperOpen);
-delay(1000);
-Gripper.write(GripperClose);
-delay(1000);
+ ///////////////////////
+ // Drop Off Movement //
+ ///////////////////////
 
-//////////////////////
-// Reverse Movement //
-//////////////////////
+ Serial.println("Start move to drop off");
+ forward_trajectory_movement(x_points_dropoff, y_points_dropoff, z_points_dropoff);
+ Serial.println("End move to drop off");
 
-Serial.println("Start reverse movement");
-reverse_trajectory_movement(x_points_2, y_points_2, z_points_2);
-Serial.println("Reverse halfway point");
-reverse_trajectory_movement(x_points, y_points, z_points);
-Serial.println("End reverse movement");
+ Gripper.write(GripperOpen); 
 
-delay(1000);
-Gripper.write(GripperOpen);
-delay(1000);
-Gripper.write(GripperClose);
-delay(1000);
+ Serial.println("Start move back to home");
+ reverse_trajectory_movement(x_points_dropoff, y_points_dropoff, z_points_dropoff);
+ Serial.println("End move back to home");
 }
