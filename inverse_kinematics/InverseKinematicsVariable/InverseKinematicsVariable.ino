@@ -42,9 +42,9 @@ float theta_2;
 float theta_3;
 
 // Starting Joint Angles
-int Joint1Angle = 45; // Change 5 sets of angles
-int Joint2Angle = 70; // Change 5 sets of angles
-int Joint3Angle = 67; // Change 5 sets of angles
+int Joint1Angle = 90; // Change 5 sets of angles
+int Joint2Angle = 90; // Change 5 sets of angles
+int Joint3Angle = 90; // Change 5 sets of angles
 int GripperOpen = 150; // Open gripper; Need to tune value
 int GripperClose = 60; // Close gripper; Need to tune value
 
@@ -97,7 +97,7 @@ void loop()
 
  x = map(read_x,0,1023,0,240);
  y = map(read_y,0,1023,0,150);
- z = map(read_z,0,1023,0,240);
+ z = map(read_z,0,1023,0,-240);
 
  calculate_theta_1();
  calculate_theta_2();
