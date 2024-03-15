@@ -11,9 +11,9 @@
 //////////////////////////////////////////////////////////////////////
 
 // starting X, Y, Z Values (Change these values to starting position) 
-float x_start = 90;
-float y_start = 90;
-float z_start = 90;
+float x_start = 0;
+float y_start = 170;
+float z_start = -100;
 
 // finishing X, Y, Z Values (Change these values to starting position) 
 float x_finish = 120;
@@ -130,7 +130,7 @@ void setup()
  z_points = calculate_projected_trajectory(z_start, z_finish, tf, (int) num_points);
 
  // Wait the 10 seconds as required.
- delay(10);
+ delay(10000);
 }
 
 void loop()
@@ -163,6 +163,7 @@ void loop()
  // Reverse Movement //
  //////////////////////
  
+ // 5s with 0.1s granularity therefore delay of 100ms between each movement.
  for (int i = num_points - 1; i >= 0; i--)
  {
   x = x_points[i];
